@@ -38,7 +38,7 @@ const findUsersMethod = async (req, res) => {
 // console.log(hashPassword)
 
 
-//tambah data
+//tambah dataaaaa
 const addUsersMethod = async (req, res) => {
     const { user_name, user_email, user_password, user_device_info} = req.body;
     const hashPassword = bcrypt.hashSync(user_password, salt);
