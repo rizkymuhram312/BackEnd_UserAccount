@@ -9,11 +9,11 @@ const salt = 10;
 // put your business logic using method sequalize
 const readUsersMethod = async (req, res) => {
     const users = await req.context.models.users.findAll(
-    // {
-    //   include: [{
-    //       model: req.context.models.users
-    //   }]
-    // }
+    {
+      include: [{
+          model: req.context.models.account
+      }]
+    }
   );
     return res.send(users); 
 }
@@ -22,11 +22,11 @@ const readUsersMethod = async (req, res) => {
 const findUsersMethod = async (req, res) => {
     const users = await req.context.models.users.findByPk(
       req.params.usersId,
-    //   {
-    //     include: [{
-    //         model: req.context.models.users
-    //     }]
-    //   }
+      {
+        include: [{
+            model: req.context.models.account
+        }]
+      }
     );
     return res.send(users);
 };

@@ -1,12 +1,12 @@
 //view data
 const readProvinceMethod = async (req,res) => {
     const province = await req.context.models.province.findAll(
-        // {
-        //     //Tambah Include
-        //     include: [{
-        //         model: req.context.models.city
-        //     }]
-        // }
+        {
+            //Tambah Include
+            include: [{
+                model: req.context.models.city
+            }]
+        }
 
     );
     return res.send(province);
@@ -16,12 +16,12 @@ const readProvinceMethod = async (req,res) => {
 const findProvinceMethod = async (req,res) => {
     const province = await req.context.models.province.findByPk(
         req.params.provId,
-        // {
-        //     //Tambah Include
-        //     include: [{
-        //         model: req.context.models.city
-        //     }]
-        // }
+        {
+            //Tambah Include
+            include: [{
+                model: req.context.models.city
+            }]
+        }
     );
     return res.send(province);
 };

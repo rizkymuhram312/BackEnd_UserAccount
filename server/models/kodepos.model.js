@@ -28,6 +28,11 @@ const kodepos = (sequelize, DataTypes) => {
       },
     ]
   });
+  kodepos.associate = models => {
+    kodepos.belongsTo(models.kecamatan,{foreignKey:'kodepos_kec_id'})
+    kodepos.hasMany(models.address,{foreignKey:'addr_accu_id'})
+  }
   return kodepos;
+ 
 };
 export default kodepos;

@@ -57,6 +57,10 @@ const address = (sequelize, DataTypes) => {
       },
     ]
   });
+  address.associate = models => {
+    address.belongsTo(models.account,{foreignKey:'addr_kodepos'})
+    address.belongsTo(models.kodepos,{foreignKey:'addr_accu_id'})
+  }
 
   return address;
 

@@ -1,3 +1,5 @@
+import models from "./IndexModel";
+
 const users = (sequelize, DataTypes) => {
   const users = sequelize.define('users', {
     user_id: {
@@ -37,6 +39,10 @@ const users = (sequelize, DataTypes) => {
       },
     ]
   });
+
+  users.associate = models => {
+    users.hasOne(models.account, {foreignKey: 'acco_user_id', onDelete:'CASCADE'})
+  }
 
   return users;
 

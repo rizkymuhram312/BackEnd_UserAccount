@@ -6,11 +6,11 @@ import { sequelize, Op } from '../models/index';
 // put your business logic using method sequalize
 const readAccountMethod = async (req, res) => {
     const account = await req.context.models.account.findAll(
-    // {
-    //   include: [{
-    //       model: req.context.models.account
-    //   }]
-    // }
+    {
+      include: [{
+          model: req.context.models.address
+      }]
+    }
   );
     return res.send(account); 
 }
@@ -19,11 +19,11 @@ const readAccountMethod = async (req, res) => {
 const findAccountMethod = async (req, res) => {
     const account = await req.context.models.account.findByPk(
       req.params.accountId,
-    //   {
-    //     include: [{
-    //         model: req.context.models.account
-    //     }]
-    //   }
+      {
+        include: [{
+            model: req.context.models.address
+        }]
+      }
     );
     return res.send(account);
 };
