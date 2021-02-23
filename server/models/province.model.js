@@ -27,7 +27,7 @@ const province = (sequelize, DataTypes) => {
   });
   province.associate = models => {
    
-    province.hasMany(models.city,{foreignKey:'city_prov_id'})
+    province.hasMany(models.city,{foreignKey:'city_prov_id', onDelete: 'CASCADE' })
   }
 
   return province;

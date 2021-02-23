@@ -41,9 +41,9 @@ const kecamatan = (sequelize, DataTypes) => {
       },
     ]
   });
-  kecamatan.associate = models => {
-    kecamatan.belongsTo(models.city,{foreignKey:'kec_city_id'})
-    kecamatan.hasMany(models.kodepos,{foreignKey:'kodepos_kec_id'})
+  kecamatan.associate = models =>  {
+    kecamatan.belongsTo(models.city,{foreignKey:'kec_city_id' })
+    kecamatan.hasMany(models.kodepos,{foreignKey:'kodepos_kec_id' , onDelete: 'CASCADE' })
   }
   return kecamatan;
 };

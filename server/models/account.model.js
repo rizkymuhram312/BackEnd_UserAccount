@@ -60,9 +60,9 @@ const account = (sequelize, DataTypes) => {
     ]
   });
 
-  account.associate = models => {
-    account.belongsTo(models.users,{foreignKey:'acco_user_id'})
-    account.hasMany(models.address,{foreignKey:'addr_accu_id'})
+  account.associate = models =>  {
+    account.belongsTo(models.users,{foreignKey:'acco_user_id' })
+    account.hasMany(models.address,{foreignKey:'addr_accu_id' , onDelete: 'CASCADE' })
   }
 
   return account;

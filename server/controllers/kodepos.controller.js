@@ -6,11 +6,11 @@ import { sequelize, Op } from '../models/index';
 // put your business logic using method sequalize
 const readKodeposMethod = async (req, res) => {
     const kdpos = await req.context.models.kodepos.findAll(
-    // {
-    //   include: [{
-    //       model: req.context.models.address
-    //   }]
-    // }
+    {
+      include: [{
+          model: req.context.models.address
+      }]
+    }
   );
     return res.send(kdpos); 
 }
