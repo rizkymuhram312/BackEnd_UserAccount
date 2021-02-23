@@ -1,3 +1,5 @@
+import models from "./IndexModel";
+
 const account = (sequelize, DataTypes) => {
   const account = sequelize.define('account', {
     acco_id: {
@@ -57,6 +59,12 @@ const account = (sequelize, DataTypes) => {
       },
     ]
   });
+
+  account.associate = models => {
+    account.belongsTo(models.users,{foreignKey:'acco_user_id'})
+    account.hasMany(models.address,{foreignKey:'addr_accu_id'})
+  }
+
   return account;
 };
 

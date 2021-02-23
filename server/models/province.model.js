@@ -25,6 +25,10 @@ const province = (sequelize, DataTypes) => {
       },
     ]
   });
+  province.associate = models => {
+   
+    province.hasMany(models.city,{foreignKey:'city_prov_id'})
+  }
 
   return province;
 
