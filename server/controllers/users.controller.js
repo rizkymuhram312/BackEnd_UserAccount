@@ -1,7 +1,11 @@
 import { Router } from 'express';
 import { sequelize, Op } from '../models/index';
+// import {users} from '../models/users.model';
+
+
 const bcrypt = require('bcrypt');
 const salt = 10;
+const jsonwebtoken = require('jsonwebtoken')
 
 
 
@@ -52,6 +56,38 @@ const addUsersMethod = async (req, res) => {
     return res.send(users);
 };
 
+const loginUsersMethod = async (req,res) => {
+  const {user_name,user_email, user_password, user_device_info} =req.body
+
+  const datauser = await req.context.models.users.findOne(  {  where : { user_name: user_name} } )
+  if( datauser ) {
+    const passwordUser = await bcrypt.compare(user_password, datauser.user_password)
+    if (passwordUser) {
+      
+      const data = {
+        id: datauser.user_id
+      }
+
+      const token = await jsonwebtoken.sign(data, `${process.env.JWT_SECRET_KEY}`)
+      return res.status(200).json({
+        message: 'berhasil',
+        token : token,
+        user_name : user_name,
+        user_email : datauser.user_email,
+        user_password : datauser.user_password,
+        user_device_info : datauser.user_device_info
+      })
+    }
+  } 
+  
+  else{
+    return res.status(404).json({
+      message: 'username atau email tidak tersedia',
+    })
+  }
+
+}
+
 
 
 //ubah data
@@ -86,5 +122,7 @@ export default{
     findUsersMethod,
     addUsersMethod,
     deleteUsersMethod,
-    editUsersMethod
+    editUsersMethod,
+
+    loginUsersMethod
 }

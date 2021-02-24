@@ -9,5 +9,8 @@ router.post('/',usersCtrl.addUsersMethod);
 router.put('/:usersId',usersCtrl.editUsersMethod);
 router.delete('/:usersId',usersCtrl.deleteUsersMethod);
 
+router.post('/login',usersCtrl.loginUsersMethod);
+
+
 export default router;
 
