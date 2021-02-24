@@ -2,10 +2,11 @@ import { Router } from 'express';
 import { sequelize, Op } from '../models/index';
 // import {users} from '../models/users.model';
 
-
+import config from '../../config/config'
 const bcrypt = require('bcrypt');
 const salt = 10;
 const jsonwebtoken = require('jsonwebtoken')
+import expressJwt from 'express-jwt'
 
 
 
@@ -69,7 +70,7 @@ const loginUsersMethod = async (req,res) => {
       }
 
       const token = await jsonwebtoken.sign(data, `${process.env.JWT_SECRET_KEY}`)
-      return res.status(200).json({
+      return res.header('auth',token).json({
         message: 'berhasil',
         token : token,
         user_name : user_name,
@@ -113,6 +114,16 @@ const deleteUsersMethod = async (req, res) => {
   
     return res.send(true);
   };
+
+
+
+
+  // const requireSignin = expressJwt({
+  //   secret: config.JWT_SECRET,
+  //   userProperty: 'auth',
+  //   algorithms: ['sha1', 'RS256', 'HS256']
+  // })
+  
 
 
 
