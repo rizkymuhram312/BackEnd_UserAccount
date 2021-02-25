@@ -1,30 +1,46 @@
 import { Router } from 'express';
 import { sequelize, Op } from '../models/index';
-// import {users} from '../models/users.model';
-
+import AuthHelper from '../helpers/AuthHelper'
 import config from '../../config/config'
-const bcrypt = require('bcrypt');
-const salt = 10;
-const jsonwebtoken = require('jsonwebtoken')
+import jwt from 'jsonwebtoken'
 import expressJwt from 'express-jwt'
 
 
 
-
-// put your business logic using method sequalize
-const readUsersMethod = async (req, res) => {
-    const users = await req.context.models.users.findAll(
-    {
-      include: [{
-          model: req.context.models.account
-      }]
-    }
-  );
-    return res.send(users); 
+// findAll = select * from users
+const findAll = async (req, res) => {
+  const users = await req.context.models.users.findAll({
+    attributes: { exclude: ['user_password','user_salt'] },
+  });
+  return res.send(users);
 }
 
+// create user with hash & salt
+const signup = async (req, res) => {
+  //const { user_name, user_email, user_password } = req.body;
+
+  const { dataValues } = new req.context.models.users(req.body);
+
+  const salt = AuthHelper.makeSalt();
+  const hashPassword = AuthHelper.hashPassword(dataValues.user_password, salt);
+  const hashDevice = AuthHelper.hashPassword(dataValues.user_device_info, salt);
+
+
+  const users = await req.context.models.users.create({
+    user_name: dataValues.user_name,
+    user_email: dataValues.user_email,
+    user_password: hashPassword,
+    user_device_info: hashDevice,
+    user_salt: salt
+  });
+
+  return res.send(users);
+}
+
+
+
 //filter pencarian data dengan primary key
-const findUsersMethod = async (req, res) => {
+const findusersMethod = async (req, res) => {
     const users = await req.context.models.users.findByPk(
       req.params.usersId,
       {
@@ -37,63 +53,78 @@ const findUsersMethod = async (req, res) => {
 };
 
 
-// hash password dengan salt 
-// const hashPassword = bcrypt.hashSync(user_password, salt);
-
-// console.log(hashPassword)
 
 
-//tambah dataaaaa
-const addUsersMethod = async (req, res) => {
-    const { user_name, user_email, user_password, user_device_info} = req.body;
-    const hashPassword = bcrypt.hashSync(user_password, salt);
-    const hashDeviceInfo = bcrypt.hashSync(user_device_info, salt);
-    const users = await req.context.models.users.create({
-        user_name : user_name,
-        user_email : user_email,
-        user_password : hashPassword,
-        user_device_info : hashDeviceInfo,
+
+// filter find by user_email
+const signin = async (req, res) => {
+  //1. extract values from request body
+  const { user_email, user_password } = req.body
+  
+  //2. gunakan try catch, agar jika terjadi error misal table ga bisa diakses bisa munculkan error message
+  try {
+
+    // idem : select * from users where user_email = :user_email
+    const datauser = await req.context.models.users.findOne({
+      where: { user_email: user_email }
     });
-    return res.send(users);
-};
+    console.log(datauser)
 
-const loginUsersMethod = async (req,res) => {
-  const {user_name,user_email, user_password, user_device_info} =req.body
+    //3. jika user tidak ketemu munculkan error
+    if (!datauser) {
+      return res.status('400').json({
+        error: "User not found"
+      });
+    }
 
-  const datauser = await req.context.models.users.findOne(  {  where : { user_name: user_name} } )
-  if( datauser ) {
-    const passwordUser = await bcrypt.compare(user_password, datauser.user_password)
-    if (passwordUser) {
-      
-      const data = {
-        id: datauser.user_id
-      }
-
-      const token = await jsonwebtoken.sign(data, `${process.env.JWT_SECRET_KEY}`)
-      return res.header('auth',token).json({
-        message: 'berhasil',
-        token : token,
-        user_name : user_name,
-        user_email : datauser.user_email,
-        user_password : datauser.user_password,
-        user_device_info : datauser.user_device_info
+    //3. check apakah user_password di table === user_passowrd yg di entry dari body,
+    // tambahkan salt
+    if (!AuthHelper.authenticate(user_password, datauser.dataValues.user_password, datauser.dataValues.user_salt)) {
+      return res.status('401').send({
+        error: "Email and password doesn't match."
       })
     }
-  } 
-  
-  else{
-    return res.status(404).json({
-      message: 'username atau email tidak tersedia',
-    })
-  }
 
-}
 
+
+
+     //4. generate token jwt, jangan lupa tambahkan jwtSecret value di file config.js
+     const token = jwt.sign({ _id: datauser.user_id}, config.jwtSecret)
+
+     //5. set expire cookie
+     res.cookie("t", token, {
+       expire: new Date() + 9999
+     })
+ 
+     //6. exclude value user_password & user_salt, agar tidak tampil di front-end
+     // lalu send dengan include token, it's done
+     return res.json({token,datauser: {
+       user_id : datauser.dataValues.user_id,
+       user_name : datauser.dataValues.user_name,
+       user_email : datauser.dataValues.user_email
+     }});
+ 
+ 
+   } catch (err) {
+     return res.status('400').json({
+       error: "Could not retrieve user"
+     });
+   }
+ 
+ }
+ 
+ const signout = (req, res) => {
+   res.clearCookie("t")
+   return res.status('200').json({
+     message: "signed out"
+   })
+ }
+ 
 
 
 //ubah data
 // Change everyone without a last name to "Doe"
-const editUsersMethod = async (req, res) => {
+const editusersMethod = async (req, res) => {
     const { user_name, user_email, user_password, user_device_info} = req.body;
     const users =  await req.context.models.users.update({    
         user_name : user_name,
@@ -107,7 +138,7 @@ const editUsersMethod = async (req, res) => {
   };
 
 //hapus data
-const deleteUsersMethod = async (req, res) => {
+const deleteusersMethod = async (req, res) => {
     const result = await req.context.models.users.destroy({
       where: { user_id: req.params.usersId },
     });
@@ -118,22 +149,24 @@ const deleteUsersMethod = async (req, res) => {
 
 
 
-  // const requireSignin = expressJwt({
-  //   secret: config.JWT_SECRET,
-  //   userProperty: 'auth',
-  //   algorithms: ['sha1', 'RS256', 'HS256']
-  // })
+  const requireSignin = expressJwt({
+    secret: config.jwtSecret,
+    userProperty: 'auth',
+    algorithms: ['sha1', 'RS256', 'HS256']
+  })
   
 
 
 
 // Gunakan export default agar semua function bisa dipakai di file lain.
 export default{
-    readUsersMethod,
-    findUsersMethod,
-    addUsersMethod,
-    deleteUsersMethod,
-    editUsersMethod,
 
-    loginUsersMethod
+    deleteusersMethod,
+    editusersMethod,
+    findAll,
+    findusersMethod,
+    signup,
+    signin,
+    requireSignin,
+    signout
 }
