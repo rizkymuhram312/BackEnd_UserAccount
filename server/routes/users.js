@@ -1,7 +1,7 @@
 import {Router} from 'express';
 // import usersCtrl from '../controllers/IndexController'
 import indexCtrl from '../controllers/IndexController'
-const { runValidation, validationDaftar } = require('../controllers/validation')
+const { runValidation, validationDaftar, validationLogin } = require('../controllers/validation')
 const verifyToken = require('./verifyToken')
 
 const router = Router();
@@ -18,10 +18,15 @@ const router = Router();
 router.put('/:usersId', indexCtrl.users.editusersMethod);
 router.delete('/:usersId',indexCtrl.users.deleteusersMethod);
 
-router.get('/',indexCtrl.users.requireSignin,indexCtrl.users.findAll);
-router.post('/signup', indexCtrl.users.signup);
-router.post('/signin/', indexCtrl.users.signin);
+router.get('/',indexCtrl.users.requireSignin,indexCtrl.users.findUsersMethod);
+router.post('/signup',validationDaftar,runValidation, indexCtrl.users.signup);
+router.post('/signin/', validationLogin,runValidation,indexCtrl.users.signin);
 router.post('/signout/', indexCtrl.users.signout);
+
+
+router.get('/all/', indexCtrl.users.readAllUser);
+
+
 
 
 

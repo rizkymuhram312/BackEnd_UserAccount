@@ -14,6 +14,12 @@ exports.runValidation = (req, res, next) => {
 
 exports.validationDaftar = [
     check('user_name', 'username tidak boleh kosong').notEmpty(),
+    check('user_email', 'email tidak boleh kosong').notEmpty().matches(/.+\@.+\..+/).withMessage('email harus memakai @'),
+    check('user_password', 'password tidak boleh kosong').notEmpty().isLength({ min:6 }).withMessage('password minimal 6 karakter')
+]
+
+exports.validationLogin = [
+
     check('user_email', 'email tidak boleh kosong').notEmpty(),
     check('user_password', 'password tidak boleh kosong').notEmpty()
 ]

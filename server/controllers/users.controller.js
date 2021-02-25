@@ -7,19 +7,24 @@ import expressJwt from 'express-jwt'
 
 
 
-// findAll = select * from users
-const findAll = async (req, res) => {
-  const users = await req.context.models.users.findAll({
-    attributes: { exclude: ['user_password','user_salt'] },
-  });
-  return res.send(users);
-}
+
 
 // create user with hash & salt
 const signup = async (req, res) => {
   //const { user_name, user_email, user_password } = req.body;
 
   const { dataValues } = new req.context.models.users(req.body);
+
+
+  const emailUser = await req.context.models.users.findOne( { where: { user_email: dataValues.user_email }  } )
+
+  if (emailUser) {
+    return res.status(404).json({
+      status : false,
+      message : 'email sudah terdaftar, silakan login'
+    })
+  }
+
 
   const salt = AuthHelper.makeSalt();
   const hashPassword = AuthHelper.hashPassword(dataValues.user_password, salt);
@@ -40,17 +45,10 @@ const signup = async (req, res) => {
 
 
 //filter pencarian data dengan primary key
-const findusersMethod = async (req, res) => {
-    const users = await req.context.models.users.findByPk(
-      req.params.usersId,
-      {
-        include: [{
-            model: req.context.models.account
-        }]
-      }
-    );
+const readAllUser = async (req, res) => {
+    const users = await req.context.models.users.findAll();
     return res.send(users);
-};
+  };
 
 
 
@@ -68,12 +66,12 @@ const signin = async (req, res) => {
     const datauser = await req.context.models.users.findOne({
       where: { user_email: user_email }
     });
-    console.log(datauser)
+    // console.log(datauser)
 
     //3. jika user tidak ketemu munculkan error
     if (!datauser) {
       return res.status('400').json({
-        error: "User not found"
+        error: "User belum terdaftar"
       });
     }
 
@@ -81,7 +79,7 @@ const signin = async (req, res) => {
     // tambahkan salt
     if (!AuthHelper.authenticate(user_password, datauser.dataValues.user_password, datauser.dataValues.user_salt)) {
       return res.status('401').send({
-        error: "Email and password doesn't match."
+        error: "Password salah"
       })
     }
 
@@ -107,11 +105,23 @@ const signin = async (req, res) => {
  
    } catch (err) {
      return res.status('400').json({
-       error: "Could not retrieve user"
+       error: "tidak dapat mendapatkan data user"
      });
    }
  
  }
+
+
+// findAll = select * from users
+const findUsersMethod = async (req, res) => {
+  const user = await req.context.models.users.findOne( {_id : req.id, attributes : {exclude : [ 'user_password', 'user_salt']}}  );
+  return res.status(200).json({
+    message : 'berhasil dipanggil',
+    data: user 
+  })
+}
+
+
  
  const signout = (req, res) => {
    res.clearCookie("t")
@@ -120,6 +130,13 @@ const signin = async (req, res) => {
    })
  }
  
+
+ const requireSignin = expressJwt({
+  secret: config.jwtSecret,
+  userProperty: 'auth',
+  algorithms: ['sha1', 'RS256', 'HS256']
+})
+
 
 
 //ubah data
@@ -149,12 +166,7 @@ const deleteusersMethod = async (req, res) => {
 
 
 
-  const requireSignin = expressJwt({
-    secret: config.jwtSecret,
-    userProperty: 'auth',
-    algorithms: ['sha1', 'RS256', 'HS256']
-  })
-  
+
 
 
 
@@ -163,8 +175,8 @@ export default{
 
     deleteusersMethod,
     editusersMethod,
-    findAll,
-    findusersMethod,
+    readAllUser,
+    findUsersMethod,
     signup,
     signin,
     requireSignin,
