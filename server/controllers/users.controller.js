@@ -39,7 +39,10 @@ const signup = async (req, res) => {
     user_salt: salt
   });
 
-  return res.send(users);
+  return res.status('201').json({
+    message : "user berhasil didaftarkan",
+    data : users
+  })
 }
 
 
@@ -71,6 +74,7 @@ const signin = async (req, res) => {
     //3. jika user tidak ketemu munculkan error
     if (!datauser) {
       return res.status('400').json({
+        status : false,
         error: "User belum terdaftar"
       });
     }
@@ -78,8 +82,10 @@ const signin = async (req, res) => {
     //3. check apakah user_password di table === user_passowrd yg di entry dari body,
     // tambahkan salt
     if (!AuthHelper.authenticate(user_password, datauser.dataValues.user_password, datauser.dataValues.user_salt)) {
-      return res.status('401').send({
+      return res.status('401').json({
+        status : false,
         error: "Password salah"
+
       })
     }
 
@@ -105,7 +111,10 @@ const signin = async (req, res) => {
  
    } catch (err) {
      return res.status('400').json({
-       error: "tidak dapat mendapatkan data user"
+      status : false,
+       error: "tidak dapat mendapatkan data user",
+       data : users
+
      });
    }
  
