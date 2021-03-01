@@ -31,7 +31,7 @@ const findKodeposMethod = async (req, res) => {
 
 //tambah data
 const addKodeposMethod = async (req, res) => {
-    const {kodepos_kec_id, kodepos} = req.body;
+    const {kodepos_kec_id, kodepos} = req.body.data;
     const kdpos = await req.context.models.kodepos.create({
         kodepos_kec_id: kodepos_kec_id,
         kodepos : kodepos,
@@ -44,7 +44,7 @@ const addKodeposMethod = async (req, res) => {
 //ubah data
 // Change everyone without a last name to "Doe"
 const editKodeposMethod = async (req, res) => {
-    const {kodepos_kec_id, kodepos} = req.body;
+    const {kodepos_kec_id, kodepos} = req.body.data;
     const kdpos =  await req.context.models.kodepos.update({    
         kodepos_kec_id: kodepos_kec_id,
         kodepos : kodepos

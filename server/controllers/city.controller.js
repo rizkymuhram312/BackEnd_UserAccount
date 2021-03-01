@@ -54,7 +54,7 @@ const filterCityByName = async (req, res) => {
 
 //tambah data
 const addCityMethod = async (req, res) => {
-    const {city_name, city_prov_id} = req.body;
+    const {city_name, city_prov_id} = req.body.data;
     const city = await req.context.models.city.create({
       city_name: city_name,
       city_prov_id : city_prov_id,
@@ -67,7 +67,7 @@ const addCityMethod = async (req, res) => {
 //ubah data
 // Change everyone without a last name to "Doe"
 const editCityMethod = async (req, res) => {
-    const {city_name, city_prov_id} = req.body;
+    const {city_name, city_prov_id} = req.body.data;
     const city =  await req.context.models.city.update({    
         city_name: city_name,
         city_prov_id : city_prov_id

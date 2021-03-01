@@ -13,7 +13,7 @@ import expressJwt from 'express-jwt'
 const signup = async (req, res) => {
   //const { user_name, user_email, user_password } = req.body;
 
-  const { dataValues } = new req.context.models.users(req.body);
+  const { dataValues } = new req.context.models.users(req.body.data);
 
 
   const emailUser = await req.context.models.users.findOne( { where: { user_email: dataValues.user_email }  } )
@@ -60,7 +60,7 @@ const readAllUser = async (req, res) => {
 // filter find by user_email
 const signin = async (req, res) => {
   //1. extract values from request body
-  const { user_email, user_password } = req.body
+  const { user_email, user_password } = req.body.data
   
   //2. gunakan try catch, agar jika terjadi error misal table ga bisa diakses bisa munculkan error message
   try {
@@ -151,7 +151,7 @@ const findUsersMethod = async (req, res) => {
 //ubah data
 // Change everyone without a last name to "Doe"
 const editusersMethod = async (req, res) => {
-    const { user_name, user_email, user_password, user_device_info} = req.body;
+    const { user_name, user_email, user_password, user_device_info} = req.body.data;
     const users =  await req.context.models.users.update({    
         user_name : user_name,
         user_email : user_email,

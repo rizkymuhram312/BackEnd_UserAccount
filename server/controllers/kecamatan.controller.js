@@ -54,7 +54,7 @@ const filterKecamatanByName = async (req, res) => {
 
 //tambah data
 const addKecamatanMethod = async (req, res) => {
-    const {kec_name, kec_city_id} = req.body;
+    const {kec_name, kec_city_id} = req.body.data;
     const kecamatan = await req.context.models.kecamatan.create({
         kec_name: kec_name,
         kec_city_id : kec_city_id,
@@ -67,7 +67,7 @@ const addKecamatanMethod = async (req, res) => {
 //ubah data
 // Change everyone without a last name to "Doe"
 const editKecamatanMethod = async (req, res) => {
-    const {kec_name, kec_city_id} = req.body;
+    const {kec_name, kec_city_id} = req.body.data;
     const kecamatan =  await req.context.models.kecamatan.update({    
         kec_name: kec_name,
         kec_city_id : kec_city_id

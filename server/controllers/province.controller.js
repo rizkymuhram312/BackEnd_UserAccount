@@ -28,7 +28,7 @@ const findProvinceMethod = async (req,res) => {
 
 //Insert data
 const addProvinceMethod = async (req,res) => {
-    const {prov_name} = req.body;
+    const {prov_name} = req.body.data;
     const province = await req.context.models.province.create({
         prov_name: prov_name
     });
@@ -37,7 +37,7 @@ const addProvinceMethod = async (req,res) => {
 
 //Ubah data
 const editProvinceMethod = async (req,res) => {
-    const {prov_name} = req.body;
+    const {prov_name} = req.body.data;
     const province = await req.context.models.province.update({
         prov_name: prov_name
     },
