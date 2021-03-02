@@ -5,6 +5,7 @@ const account = (sequelize, DataTypes) => {
     acco_id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
+     
       allowNull: false,
       primaryKey: true
     },

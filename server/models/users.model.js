@@ -23,6 +23,10 @@ const users = (sequelize, DataTypes) => {
     user_device_info: {
       type: DataTypes.STRING(200),
       allowNull: true
+    },
+    user_salt: {
+      type: DataTypes.STRING(50),
+      allowNull: true
     }
   }, {
     sequelize,

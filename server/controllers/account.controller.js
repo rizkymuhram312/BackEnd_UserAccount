@@ -39,6 +39,7 @@ const addAccountMethod = async (req, res) => {
             acco_birthdate,
             acco_avatar,
             acco_user_id} = req.body;
+    
     const account = await req.context.models.account.create({
         acco_username : acco_username,
         acco_nama : acco_nama,
