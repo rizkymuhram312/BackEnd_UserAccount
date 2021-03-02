@@ -13,7 +13,7 @@ import expressJwt from 'express-jwt'
 const signup = async (req, res) => {
   //const { user_name, user_email, user_password } = req.body;
 
-  const { dataValues } = new req.context.models.users(req.body.data);
+  const { dataValues } = new req.context.models.users(req.body);
 
 
   const emailUser = await req.context.models.users.findOne( { where: { user_email: dataValues.user_email }  } )
@@ -60,7 +60,7 @@ const readAllUser = async (req, res) => {
 // filter find by user_email
 const signin = async (req, res) => {
   //1. extract values from request body
-  const { user_email, user_password } = req.body.data
+  const { user_email, user_password } = req.body
   
   //2. gunakan try catch, agar jika terjadi error misal table ga bisa diakses bisa munculkan error message
   try {
@@ -75,7 +75,7 @@ const signin = async (req, res) => {
     if (!datauser) {
       return res.status('400').json({
         status : false,
-        error: "User belum terdaftar"
+        message: "User belum terdaftar"
       });
     }
 
@@ -84,7 +84,7 @@ const signin = async (req, res) => {
     if (!AuthHelper.authenticate(user_password, datauser.dataValues.user_password, datauser.dataValues.user_salt)) {
       return res.status('401').json({
         status : false,
-        error: "Password salah"
+        message: "Password salah"
 
       })
     }
@@ -102,17 +102,20 @@ const signin = async (req, res) => {
  
      //6. exclude value user_password & user_salt, agar tidak tampil di front-end
      // lalu send dengan include token, it's done
+     req.context.user_id = datauser.dataValues.user_id
+      // console.log(req.context.user_id)
+
      return res.json({token,datauser: {
        user_id : datauser.dataValues.user_id,
        user_name : datauser.dataValues.user_name,
        user_email : datauser.dataValues.user_email
      }});
- 
+
  
    } catch (err) {
      return res.status('400').json({
       status : false,
-       error: "tidak dapat mendapatkan data user",
+      message: "tidak dapat mendapatkan data user",
        data : users
 
      });
@@ -121,9 +124,13 @@ const signin = async (req, res) => {
  }
 
 
-// findAll = select * from users
+// findAll = select from users yang login
 const findUsersMethod = async (req, res) => {
-  const user = await req.context.models.users.findOne( {_id : req.id, attributes : {exclude : [ 'user_password', 'user_salt']}}  );
+  // console.log(req.context.user_id)
+
+  const user = await req.context.models.users.findOne( )
+  console.log(user)
+  // const user = await req.context.models.users.findOne({_id : req.id, attributes : {exclude : [ 'user_password', 'user_salt']}}  );
   return res.status(200).json({
     message : 'berhasil dipanggil',
     data: user 

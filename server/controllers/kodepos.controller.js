@@ -30,14 +30,25 @@ const findKodeposMethod = async (req, res) => {
 
 
 //tambah data
+// const addKodeposMethod = async (req, res) => {
+//     const {kodepos, kodepos_kec_id} = req.body;
+//     const kdpos = await req.context.models.kodepos.create({
+//         kodepos_kec_id: kodepos_kec_id,
+//         kodepos : kodepos,
+//     });
+//     return res.send(kdpos);
+// };
+
+//tambah data
 const addKodeposMethod = async (req, res) => {
-    const {kodepos_kec_id, kodepos} = req.body.data;
-    const kdpos = await req.context.models.kodepos.create({
-        kodepos_kec_id: kodepos_kec_id,
-        kodepos : kodepos,
-    });
-    return res.send(kdpos);
+  const {kodepos, kodepos_kec_id} = req.body.data;
+  const kdpos = await req.context.models.kodepos.create({
+      kodepos: kodepos,
+      kodepos_kec_id : kodepos_kec_id,
+  });
+  return res.send(kdpos);
 };
+
 
 
 
