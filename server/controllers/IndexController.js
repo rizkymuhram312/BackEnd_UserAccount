@@ -18,6 +18,7 @@ export default {
     kecamatan,
     kodepos,
     province,
-    users
+    users,
+    
     
 }

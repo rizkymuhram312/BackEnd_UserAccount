@@ -44,8 +44,8 @@ const users = (sequelize, DataTypes) => {
     ]
   });
 
-  users.associate = models => {
-    users.hasOne(models.account, {foreignKey: 'acco_user_id', onDelete:'CASCADE'})
+  users.associate = models =>  {
+    users.hasOne(models.account, {foreignKey: 'acco_user_id', onDelete:'CASCADE', onDelete: 'CASCADE' })
   }
 
   return users;

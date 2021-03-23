@@ -11,6 +11,8 @@ router.post('/', kecamatanCtrl.addKecamatanMethod);
 router.delete('/:kecamatanId', kecamatanCtrl.deleteKecamatanMethod);
 router.put('/:kecamatanId', kecamatanCtrl.editKecamatanMethod);
 router.get('/cari/:kecamatanName', kecamatanCtrl.filterKecamatanByName);
+router.get('/search/:CityId', kecamatanCtrl.KecamatanRest);
+router.get('/ambil/:CityId', kecamatanCtrl.KecamatanGet);
 
 
 export default router;

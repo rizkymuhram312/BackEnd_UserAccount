@@ -1,7 +1,3 @@
-import { Router } from 'express';
-import { sequelize, Op } from '../models/index';
-
-
 
 // put your business logic using method sequalize
 const readAccountMethod = async (req, res) => {
@@ -39,6 +35,13 @@ const addAccountMethod = async (req, res) => {
             acco_birthdate,
             acco_avatar,
             acco_user_id} = req.body;
+
+    const getAccount = await req.context.models.account.findOne({
+      where : {acco_username:acco_username}
+     
+    })
+    console.log(getAccount)
+    if (getAccount == null || getAccount == undefined ){
     
     const account = await req.context.models.account.create({
         acco_username : acco_username,
@@ -50,7 +53,15 @@ const addAccountMethod = async (req, res) => {
         acco_avatar : acco_avatar,
         acco_user_id : acco_user_id,
     });
-    return res.send(account);
+    // return res.send(account);
+    return res.status('201').json({
+      message : "account berhasil didaftarkan",
+      data : account
+    })
+  }
+  else{
+    return res.sendStatus(403)
+  }
 };
 
 

@@ -28,9 +28,9 @@ const kodepos = (sequelize, DataTypes) => {
       },
     ]
   });
-  kodepos.associate = models => {
-    kodepos.belongsTo(models.kecamatan,{foreignKey:'kodepos_kec_id'})
-    kodepos.hasMany(models.address,{foreignKey:'addr_accu_id'})
+  kodepos.associate = models =>  {
+    kodepos.belongsTo(models.kecamatan,{foreignKey:'kodepos_kec_id' })
+    kodepos.hasMany(models.address,{foreignKey:'addr_kodepos', onDelete: 'CASCADE' })
   }
   return kodepos;
  
