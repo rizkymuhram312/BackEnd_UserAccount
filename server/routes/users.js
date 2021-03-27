@@ -19,7 +19,7 @@ router.put('/:usersId', indexCtrl.users.editusersMethod);
 router.delete('/:usersId',indexCtrl.users.deleteusersMethod);
 // router.get('/:usersId',indexCtrl.users.searchUserstMethod);
 router.get('/',indexCtrl.users.requireSignin,indexCtrl.users.findUsersMethod);
-router.post('/signup',validationDaftar,runValidation, indexCtrl.users.signup);
+router.post('/signup', indexCtrl.users.signup);
 router.post('/signin/', validationLogin,runValidation,indexCtrl.users.signin);
 router.post('/signout/', indexCtrl.users.signout);
 

@@ -6,6 +6,7 @@ import kecamatan from "./kecamatan.controller"
 import kodepos from "./kodepos.controller"
 import province from "./province.controller"
 import users from "./users.controller"
+import dashboard from "./dashboard.controller"
 
 
 
@@ -19,6 +20,7 @@ export default {
     kodepos,
     province,
     users,
+    dashboard
     
     
 }
